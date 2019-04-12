@@ -12,13 +12,15 @@ import com.aeh.trendinggithubrepos.R;
 import com.aeh.trendinggithubrepos.rest.models.GitReposModel;
 import com.squareup.picasso.Picasso;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 
 public class GitReposAdapter extends RecyclerView.Adapter<GitReposAdapter.ViewHolder> {
 
     private List<GitReposModel> repos;
 
-    public GitReposAdapter(List<GitReposModel> repos) {
+    GitReposAdapter(List<GitReposModel> repos) {
         this.repos = repos;
     }
 
@@ -40,11 +42,25 @@ public class GitReposAdapter extends RecyclerView.Adapter<GitReposAdapter.ViewHo
         holder.title.setText(repo.getTitle());
         holder.description.setText(repo.getDescription());
         holder.username.setText(repo.getUsername());
-        holder.rating.setText(repo.getRating());
+        int ratings = Integer.parseInt(repo.getRating());
+        holder.rating.setText(formatValue(ratings));
         Picasso.get().load(repo.getAvatarUrl()).into(holder.avatar);
     }
 
-    public void updateList(List<GitReposModel> reposList) {
+    public static String formatValue(double value) {
+        int power;
+        String suffix = " kmbt";
+        String formattedNumber;
+
+        NumberFormat formatter = new DecimalFormat("#,###.#");
+        power = (int)StrictMath.log10(value);
+        value = value/(Math.pow(10,(power/3)*3));
+        formattedNumber=formatter.format(value);
+        formattedNumber = formattedNumber + suffix.charAt(power/3);
+        return formattedNumber.length()>4 ?  formattedNumber.replaceAll("\\.[0-9]+", "") : formattedNumber;
+    }
+
+    void updateList(List<GitReposModel> reposList) {
 
         this.repos.addAll(reposList);
         notifyDataSetChanged();
