@@ -17,6 +17,10 @@ It lists for each repo/row the following details :
 
 Android 4.0.3 and above
 
+### Installing
+
+Download the [APK file](https://drive.google.com/open?id=11l6ctLVJLyuPsnlBTJclwYTPrwVA_k4k)
+
 ## Built With
 
 * [Retrofit](https://square.github.io/retrofit/) - A type-safe HTTP client for Android and Java
