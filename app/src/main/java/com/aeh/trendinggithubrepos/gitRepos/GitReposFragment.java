@@ -38,23 +38,19 @@ public class GitReposFragment extends Fragment implements Paginate.Callbacks{
     private RecyclerView recyclerView;
     private GitReposAdapter adapter;
 
-    private List<GitReposModel> reposList;
+    private List<GitReposModel> reposList = new ArrayList<>();
     private int page = 0;
+    private boolean isLoading = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.git_repos_fragment, null, false);
+
         recyclerView = rootView.findViewById(R.id.repos_recyclerView);
-
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         setUpRecyclerView();
-
-        Paginate.with(recyclerView, this)
-                .setLoadingTriggerThreshold(3)
-                .addLoadingListItem(true)
-                .build();
+        getRepos();
 
         return rootView;
     }
@@ -66,6 +62,10 @@ public class GitReposFragment extends Fragment implements Paginate.Callbacks{
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
 
+        Paginate.with(recyclerView, this)
+                .setLoadingTriggerThreshold(3)
+                .addLoadingListItem(true)
+                .build();
     }
 
     private void getRepos() {
@@ -73,30 +73,33 @@ public class GitReposFragment extends Fragment implements Paginate.Callbacks{
         String url = "/search/repositories?q=created:>" + DateUtils.getFormattedDateOneMonthAgo() + "&sort=stars&order=desc&page=" + page;
 
         RestInterface restInterface = ApiUtils.getAPIService();
-        restInterface.getRepos(url).enqueue(new Callback<JSONObject>() {
+        restInterface.getRepos(url).enqueue(new Callback<JsonElement>() {
             @Override
-            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
+            public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
 
                 if (response.code() == REST_STATUS_SUCCESS && response.body() != null) {
 
+                    isLoading = false;
                     parseJson(response.body());
+                    updateList();
 
                 }
 
             }
 
             @Override
-            public void onFailure(Call<JSONObject> call, Throwable t) {
+            public void onFailure(Call<JsonElement> call, Throwable t) {
 
             }
         });
     }
 
-    private void parseJson(JSONObject response){
+    private void parseJson(JsonElement response){
 
         try {
 
-            JSONArray items = response.getJSONArray("items");
+            JSONObject jsonObject = new JSONObject(response.toString());
+            JSONArray items = jsonObject.getJSONArray("items");
             for(int i = 0; i < items.length(); i++){
 
                 GitReposModel gitReposModel = new GitReposModel();
@@ -115,14 +118,24 @@ public class GitReposFragment extends Fragment implements Paginate.Callbacks{
 
     }
 
+    private void updateList(){
+
+        adapter.updateList(reposList);
+
+    }
+
     @Override
     public void onLoadMore() {
+
+        isLoading = true;
+        page++;
+        getRepos();
 
     }
 
     @Override
     public boolean isLoading() {
-        return false;
+        return isLoading;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.aeh.trendinggithubrepos.rest;
 
-import org.json.JSONObject;
+import com.google.gson.JsonElement;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Url;
@@ -8,5 +8,5 @@ import retrofit2.http.Url;
 public interface RestInterface {
 
     @GET
-    Call<JSONObject> getRepos(@Url String url);
+    Call<JsonElement> getRepos(@Url String url);
 }
