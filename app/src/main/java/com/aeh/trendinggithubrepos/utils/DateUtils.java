@@ -11,7 +11,7 @@ public class DateUtils {
 
     private static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    private String getFormattedDateOneMonthAgo(){
+    public static String getFormattedDateOneMonthAgo(){
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, -1);

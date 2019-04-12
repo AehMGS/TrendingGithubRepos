@@ -44,6 +44,11 @@ public class GitReposAdapter extends RecyclerView.Adapter<GitReposAdapter.ViewHo
         Picasso.get().load(repo.getAvatarUrl()).into(holder.avatar);
     }
 
+    public void addRepos() {
+
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         return repos.size();
