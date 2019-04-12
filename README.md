@@ -15,7 +15,7 @@ It lists for each repo/row the following details :
 
 ### Prerequisites
 
-Android 15 and above
+Android 4.0.3 and above
 
 ## Built With
 
